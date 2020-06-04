@@ -3,7 +3,7 @@ const numberFormat = require('./numberFormat');
 const to = require('await-to-js').default;
 const handleError = require('cli-handle-error');
 
-module.exports = async (table, states, json) => {
+module.exports = async (table, states, continents, json) => {
 	const [err, response] = await to(
 		axios.get(`https://corona.lmao.ninja/v2/all`)
 	);
@@ -13,7 +13,7 @@ module.exports = async (table, states, json) => {
 	const format = numberFormat(json);
 
 	// Don't print coz for states we still need that data of updated data.
-	if (!states) {
+	if (!states && !continents) {
 		table.push([
 			`→`,
 			`Worldwide`,

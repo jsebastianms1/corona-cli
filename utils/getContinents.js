@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { cyan, dim } = require('chalk');
 const numberFormat = require('./numberFormat');
-const { sortingKeys } = require('./table.js');
+const { sortingContinentKeys } = require('./table.js');
 const to = require('await-to-js').default;
 const handleError = require('cli-handle-error');
 const orderBy = require('lodash.orderby');
@@ -11,45 +11,44 @@ module.exports = async (
 	spinner,
 	output,
 	states,
-	countryName,
 	continents,
 	{ sortBy, limit, reverse, bar, json }
 ) => {
-	if (!countryName && !states && !continents && !bar) {
+	if (continents && !states && !bar) {
 		sortValidation(sortBy, spinner);
 		const [err, response] = await to(
-			axios.get(`https://corona.lmao.ninja/v2/countries`)
+			axios.get(`https://corona.lmao.ninja/v2/continents`)
 		);
 		handleError(`API is down, try again later.`, err, false);
-		let allCountries = response.data;
+		let allContinents = response.data;
 
 		// Format.
 		const format = numberFormat(json);
 
 		// Sort & reverse.
 		const direction = reverse ? 'asc' : 'desc';
-		allCountries = orderBy(
-			allCountries,
-			[sortingKeys[sortBy]],
+		allContinents = orderBy(
+			allContinents,
+			[sortingContinentKeys[sortBy]],
 			[direction]
 		);
 
 		// Limit.
-		allCountries = allCountries.slice(0, limit);
+		allContinents = allContinents.slice(0, limit);
 
 		// Push selected data.
-		allCountries.map((oneCountry, count) => {
+		allContinents.map((continent, count) => {
 			output.push([
 				count + 1,
-				oneCountry.country,
-				format(oneCountry.cases),
-				format(oneCountry.todayCases),
-				format(oneCountry.deaths),
-				format(oneCountry.todayDeaths),
-				format(oneCountry.recovered),
-				format(oneCountry.active),
-				format(oneCountry.critical),
-				format(oneCountry.casesPerOneMillion)
+				continent.continent,
+				format(continent.cases),
+				format(continent.todayCases),
+				format(continent.deaths),
+				format(continent.todayDeaths),
+				format(continent.recovered),
+				format(continent.active),
+				format(continent.critical),
+				format(continent.casesPerOneMillion)
 			]);
 		});
 

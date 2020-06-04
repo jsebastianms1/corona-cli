@@ -7,7 +7,9 @@ module.exports = meow(
 	  ${green(`corona`)} ${cyan(`<command>`)} ${yellow(`[--option]`)}
 
 	Commands
-	  ${cyan(`country-name`)}  Get data for a given country
+    ${cyan(`country-name`)}  Get data for a given country
+    ${cyan(`continent-code`)} Get data for a given continent
+    ${cyan(`continents`)} Get Data for all Continents
 	  ${cyan(`states`)}        Get data for all USA states
 
 	Options

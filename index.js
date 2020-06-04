@@ -19,6 +19,7 @@ const getCountry = require('./utils/getCountry.js');
 const getCountryChart = require('./utils/getCountryChart.js');
 const getBar = require('./utils/getBar.js');
 const getWorldwide = require('./utils/getWorldwide.js');
+const getContinents = require('./utils/getContinents');
 const getCountries = require('./utils/getCountries.js');
 const {
 	style,
@@ -26,6 +27,8 @@ const {
 	colored,
 	singleStates,
 	coloredStates,
+	singleContinents,
+	coloredContinents,
 	borderless
 } = require('./utils/table.js');
 
@@ -48,25 +51,30 @@ const options = { sortBy, limit, reverse, minimal, chart, log, json, bar };
 	const spinner = ora({ text: '' });
 	input === 'help' && (await cli.showHelp(0));
 	const states = input === 'states' ? true : false;
+	const continents = input === 'continents' ? true : false;
 	const country = states ? '' : input;
 
 	// Table
 	const head = xcolor ? single : colored;
 	const headStates = xcolor ? singleStates : coloredStates;
+	const headContinents = xcolor ? singleContinents : coloredContinents;
 	const border = minimal ? borderless : {};
 	const OutputFormat = json ? JsonOutput : Table;
 	const output = !states
-		? new OutputFormat({ head, style, chars: border })
+		? !continents
+			? new OutputFormat({ head, style, chars: border })
+			: new OutputFormat({ head: headContinents, style, chars: border })
 		: new OutputFormat({ head: headStates, style, chars: border });
 
 	// Display data.
 	spinner.start();
-	const lastUpdated = await getWorldwide(output, states, json);
-	await getCountry(spinner, output, states, country, options);
-	await getStates(spinner, output, states, options);
-	await getCountries(spinner, output, states, country, options);
+	const lastUpdated = await getWorldwide(output, states, continents, json);
+	await getCountry(spinner, output, states, country, continents, options);
+	await getStates(spinner, output, states, continents, options);
+	await getCountries(spinner, output, states, country, continents, options);
+	await getContinents(spinner, output, states, continents, options);
 	await getCountryChart(spinner, country, options);
 	await getBar(spinner, country, states, options);
 
-	theEnd(lastUpdated, states, minimal || json);
+	theEnd(lastUpdated, states, continents, minimal || json);
 })();

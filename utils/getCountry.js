@@ -4,8 +4,15 @@ const exitCountry = require('./exitCountry');
 const to = require('await-to-js').default;
 const handleError = require('cli-handle-error');
 
-module.exports = async (spinner, table, states, countryName, options) => {
-	if (countryName && !states && !options.chart) {
+module.exports = async (
+	spinner,
+	table,
+	states,
+	countryName,
+	continents,
+	options
+) => {
+	if (countryName && !states && !continents && !options.chart) {
 		const [err, response] = await to(
 			axios.get(`https://corona.lmao.ninja/v2/countries/${countryName}`)
 		);
